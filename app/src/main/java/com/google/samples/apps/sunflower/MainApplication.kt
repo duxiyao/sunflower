@@ -17,7 +17,19 @@
 package com.google.samples.apps.sunflower
 
 import android.app.Application
+import com.google.samples.apps.sunflower.services.TraceServiceImpl
+import com.xdandroid.hellodaemon.DaemonEnv
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class MainApplication : Application()
+class MainApplication : Application(){
+    override fun onCreate() {
+        super.onCreate()
+
+        //需要在 Application 的 onCreate() 中调用一次 DaemonEnv.initialize()
+        //需要在 Application 的 onCreate() 中调用一次 DaemonEnv.initialize()
+        DaemonEnv.initialize(this, TraceServiceImpl::class.java, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL)
+        TraceServiceImpl.sShouldStopService = false
+        DaemonEnv.startServiceMayBind(TraceServiceImpl::class.java)
+    }
+}

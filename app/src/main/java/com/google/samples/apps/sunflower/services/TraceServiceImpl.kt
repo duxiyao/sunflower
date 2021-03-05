@@ -17,6 +17,7 @@
 package com.google.samples.apps.sunflower.services
 
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import com.google.samples.apps.sunflower.api.WOLService
 import com.google.samples.apps.sunflower.data.Response
@@ -64,6 +65,7 @@ class TraceServiceImpl: AbsWorkService() {
 
     override fun startWork(intent: Intent?, flags: Int, startId: Int) {
         println("检查磁盘中是否有上次销毁时保存的数据")
+
         sDisposable = Observable
                 .interval(5, TimeUnit.SECONDS) //取消任务时取消定时唤醒
                 .doOnDispose {
@@ -72,6 +74,15 @@ class TraceServiceImpl: AbsWorkService() {
                 }
                 .subscribe { count: Long ->
                     println("---每 5 秒采集一次数据... count = $count")
+                    if(!WhiteService.serviceRunning){
+                        println("---if(!WhiteService.serviceRunning)")
+                        val whiteIntent = Intent(applicationContext, WhiteService::class.java)
+                        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.O){
+                            startForegroundService(whiteIntent)
+                        }else {
+                            startService(whiteIntent)
+                        }
+                    }
                     getAction()
                     if (count > 0 && count % 18 == 0L) println("保存数据到磁盘。 saveCount = " + (count / 18 - 1))
                 }

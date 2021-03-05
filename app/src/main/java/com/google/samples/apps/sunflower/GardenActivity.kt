@@ -16,12 +16,16 @@
 
 package com.google.samples.apps.sunflower
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil.setContentView
 import com.google.samples.apps.sunflower.databinding.ActivityGardenBinding
+import com.google.samples.apps.sunflower.services.WhiteService
 import com.xdandroid.hellodaemon.IntentWrapper
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class GardenActivity : AppCompatActivity() {
@@ -29,6 +33,12 @@ class GardenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView<ActivityGardenBinding>(this, R.layout.activity_garden)
+//        val whiteIntent = Intent(applicationContext, WhiteService::class.java)
+//        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
+//            startForegroundService(whiteIntent)
+//        }else {
+//            startService(whiteIntent)
+//        }
         IntentWrapper.whiteListMatters(this, "轨迹跟踪服务的持续运行")
     }
 

@@ -20,6 +20,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:networkSecurityConfig="@xml/network_security_config"
@@ -41,6 +42,9 @@
         </activity>
 
         <service android:name=".services.TraceServiceImpl"/>
+        <service android:name=".services.WhiteService"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>

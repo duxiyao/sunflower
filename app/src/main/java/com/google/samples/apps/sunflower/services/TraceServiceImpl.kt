@@ -28,6 +28,7 @@ import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -39,6 +40,8 @@ class TraceServiceImpl: AbsWorkService() {
     lateinit var wolService: WOLService
 
     val wol=WOL("54BF647ED56B","192.168.2.255",9);
+
+    var executors= Executors.newSingleThreadExecutor();
 
     companion object{
         //是否 任务完成, 不再需要服务运行?
@@ -74,35 +77,49 @@ class TraceServiceImpl: AbsWorkService() {
                 }
                 .subscribe { count: Long ->
                     println("---每 5 秒采集一次数据... count = $count")
-                    if(!WhiteService.serviceRunning){
-                        println("---if(!WhiteService.serviceRunning)")
-                        val whiteIntent = Intent(applicationContext, WhiteService::class.java)
-                        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.O){
-                            startForegroundService(whiteIntent)
-                        }else {
-                            startService(whiteIntent)
-                        }
+//                    if(!WhiteService.serviceRunning){
+//                        println("---if(!WhiteService.serviceRunning)")
+//                        val whiteIntent = Intent(applicationContext, WhiteService::class.java)
+//                        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.O){
+//                            startForegroundService(whiteIntent)
+//                        }else {
+//                            startService(whiteIntent)
+//                        }
+//                    }
+                    executors.submit{
+
+                        getAction()
                     }
-                    getAction()
                     if (count > 0 && count % 18 == 0L) println("保存数据到磁盘。 saveCount = " + (count / 18 - 1))
                 }
     }
 
     fun getAction(){
-        GlobalScope.launch {
-            try {
-                var r=wolService.getAction();
-                if(r.data as Boolean){
-                    println("send magic flag is "+r.data)
-                    wol.wakeUp()
-                }else{
-                    println("else send magic flag is "+r.data)
-                }
-            }catch (e:Exception){
+//        GlobalScope.launch {
+//            try {
+//                var r=wolService.getAction();
+//                if(r.data as Boolean){
+//                    println("send magic flag is "+r.data)
+//                    wol.wakeUp()
+//                }else{
+//                    println("else send magic flag is "+r.data)
+//                }
+//            }catch (e:Exception){
+//                e.printStackTrace()
+//            }
+//        }
 
-            }
-        }
-
+//        try {
+//            var r=wolService.getAction1();
+//            if(r.data as Boolean){
+//                println("send magic flag is "+r.data)
+//                wol.wakeUp()
+//            }else{
+//                println("else send magic flag is "+r.data)
+//            }
+//        }catch (e:Exception){
+//
+//        }
     }
 
     override fun stopWork(intent: Intent?, flags: Int, startId: Int) {

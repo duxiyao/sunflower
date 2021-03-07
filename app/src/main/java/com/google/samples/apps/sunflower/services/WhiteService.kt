@@ -26,15 +26,28 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.samples.apps.sunflower.GardenActivity
 import com.google.samples.apps.sunflower.R
+import com.google.samples.apps.sunflower.api.WOLService
+import com.google.samples.apps.sunflower.utilities.WOL
+import dagger.hilt.android.AndroidEntryPoint
+import java.util.concurrent.Executors
+import javax.inject.Inject
 
 
 const val notificationId="WhiteService";
 const val notificationName="WhiteService";
 
+@AndroidEntryPoint
 class WhiteService : Service() , IBinder.DeathRecipient{
     private val TAG = WhiteService::class.java.simpleName
     private var notificationManager: NotificationManager? = null
     private val FOREGROUND_ID = 1000
+
+    @Inject
+    lateinit var wolService: WOLService
+
+    val wol= WOL("54BF647ED56B","192.168.2.255",9);
+
+    var executors= Executors.newSingleThreadExecutor();
 
     companion object{
         @Volatile
@@ -50,6 +63,23 @@ class WhiteService : Service() , IBinder.DeathRecipient{
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             var channel = NotificationChannel(notificationId, notificationName, NotificationManager.IMPORTANCE_HIGH);
             notificationManager?.createNotificationChannel(channel);
+        }
+        executors.submit{
+            while (true){
+                Thread.sleep(3000);
+                println("executors")
+                try {
+                    var r=wolService.getAction();
+                    if(r.data as Boolean){
+                        println("send magic flag is "+r.data)
+                        wol.wakeUp()
+                    }else{
+                        println("else send magic flag is "+r.data)
+                    }
+                }catch (e:Exception){
+                    e.printStackTrace()
+                }
+            }
         }
     }
 

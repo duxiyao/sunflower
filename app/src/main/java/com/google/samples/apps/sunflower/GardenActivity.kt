@@ -33,13 +33,14 @@ class GardenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView<ActivityGardenBinding>(this, R.layout.activity_garden)
-//        val whiteIntent = Intent(applicationContext, WhiteService::class.java)
-//        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
-//            startForegroundService(whiteIntent)
-//        }else {
-//            startService(whiteIntent)
-//        }
+        val whiteIntent = Intent(applicationContext, WhiteService::class.java)
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
+            startForegroundService(whiteIntent)
+        }else {
+            startService(whiteIntent)
+        }
         IntentWrapper.whiteListMatters(this, "轨迹跟踪服务的持续运行")
+
     }
 
 

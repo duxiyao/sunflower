@@ -16,7 +16,6 @@
 
 package com.google.samples.apps.sunflower.api
 
-import com.google.samples.apps.sunflower.BuildConfig
 import com.google.samples.apps.sunflower.data.Response
 import com.google.samples.apps.sunflower.data.UnsplashSearchResponse
 import okhttp3.OkHttpClient
@@ -28,8 +27,11 @@ import retrofit2.http.Query
 
 interface WOLService {
 
+//    @GET("wol")
+//    suspend fun getAction(): Response
+
     @GET("wol")
-    suspend fun getAction(): Response
+    public fun getAction(): Response
 
     companion object {
         private const val BASE_URL = "http://wolserver.dancecode.cn/"
